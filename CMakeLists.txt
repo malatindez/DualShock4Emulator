@@ -1,0 +1,25 @@
+cmake_minimum_required(VERSION 3.10)
+project(DS4Emulator CXX)
+
+
+set(SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src/ViGEmClient")
+file(GLOB_RECURSE SOURCES ${SRC_DIR} *.*)
+list(FILTER SOURCES INCLUDE REGEX "${SRC_DIR}/*" )
+
+add_library(ViGEmClient STATIC ${SOURCES})
+set_target_properties(ViGEmClient PROPERTIES PUBLIC_HEADER ${CMAKE_CURRENT_SOURCE_DIR}/include/ViGEmClient.h)
+target_link_libraries(ViGEmClient setupapi) 
+
+include_directories("${SRC_DIR}/../include")
+
+
+set(SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src/DS4Emulator")
+file(GLOB_RECURSE SOURCES ${SRC_DIR} *.*)
+list(FILTER SOURCES INCLUDE REGEX "${SRC_DIR}/*" )
+
+set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+
+add_library(DS4Emulator SHARED ${SOURCES})
+target_link_libraries(DS4Emulator ViGEmClient setupapi) 
+
+string(REPLACE "/D_DEBUG" "" CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG}")
